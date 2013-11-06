@@ -27,25 +27,16 @@ func NewIdentityMatrix(row int) Matrix {
 
 // matrix m multiply by scale, return a new matrix
 func MultiSM(scale float64, m Matrix) Matrix {
-	return m.Fork().Multi(scale)
+	return m.Fork().MultiS(scale)
 }
 
-// matrix m1 multiply by m2, return a new matrix
-func MultiMM(m1 Matrix, m2 Matrix) Matrix {
-	if m1.Cols() != m2.Rows() {
-		return nil
+func MultiMM(m Matrix, ms ...Matrix) Matrix {
+	nm := m
+	for _, mm := range ms {
+		nm = nm.multiM(mm)
 	}
 
-	m := NewMatrix(m1.Rows(), m2.Cols())
-	for i := 1; i <= m.Cols(); i++ {
-		col := m.Column(i)
-		for j := 1; j <= col.Dim(); j++ {
-			dot, _ := vector.Dot(m1.Row(j), m2.Column(i))
-			col.Set(j, dot)
-		}
-	}
-
-	return m
+	return nm
 }
 
 func (m Matrix) Init(cols ...vector.Vector) {
@@ -55,11 +46,40 @@ func (m Matrix) Init(cols ...vector.Vector) {
 }
 
 func (m Matrix) InitColumn(col int, v vector.Vector) {
+	if col <= 0 || col > m.Cols() {
+		return
+	}
+
 	m.Column(col).InitV(v)
 }
 
+func (m Matrix) InitRow(row int, v vector.Vector) {
+	if row <= 0 || row > m.Rows() {
+		return
+	}
+
+	for i := 1; i <= m.Cols(); i++ {
+		if v.Dim() < i {
+			break
+		}
+		m.Set(row, i, v.Get(i))
+	}
+}
+
 func (m Matrix) Get(row, col int) float64 {
+	if row <= 0 || row > m.Rows() || col <= 0 || col > m.Cols() {
+		return 0
+	}
 	return m.Column(col).Get(row)
+}
+
+// set value in [row, col], return old value
+func (m Matrix) Set(row, col int, value float64) float64 {
+	if row <= 0 || row > m.Rows() || col <= 0 || col > m.Cols() {
+		return 0
+	}
+
+	return m.Column(col).Set(row, value)
 }
 
 func (m Matrix) Cols() int {
@@ -102,11 +122,28 @@ func (m Matrix) Transpose() Matrix {
 	return tran
 }
 
-func (m Matrix) Multi(scale float64) Matrix {
+func (m Matrix) MultiS(scale float64) Matrix {
 	for i := 1; i <= m.Cols(); i++ {
 		m.Column(i).Multi(scale)
 	}
 	return m
+}
+
+// return a new matrix
+func (m Matrix) multiM(m2 Matrix) Matrix {
+	if m.Cols() != m2.Rows() {
+		return nil
+	}
+	mm := NewMatrix(m.Rows(), m2.Cols())
+	for i := 1; i <= mm.Cols(); i++ {
+		col := mm.Column(i)
+		for j := 1; j <= col.Dim(); j++ {
+			dot, _ := vector.Dot(m.Row(j), m2.Column(i))
+			col.Set(j, dot)
+		}
+	}
+
+	return mm
 }
 
 func (m Matrix) Fork() Matrix {

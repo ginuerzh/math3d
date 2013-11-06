@@ -1,4 +1,4 @@
 gomath3d
 ========
 
-vector and matrix operation implemented by golang
+vector and matrix operation implemented in golang

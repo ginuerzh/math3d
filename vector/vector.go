@@ -194,11 +194,14 @@ func (v Vector) InitV(vec Vector) {
 	copy(v, vec)
 }
 
-func (v Vector) Set(index int, value float64) Vector {
-	if index > 0 && index <= v.Dim() {
-		v[index-1] = value
+// set value in index, return old value
+func (v Vector) Set(index int, value float64) float64 {
+	if index <= 0 || index > v.Dim() {
+		return 0
 	}
-	return v
+	old := v[index-1]
+	v[index-1] = value
+	return old
 }
 
 func (v Vector) Get(index int) float64 {
