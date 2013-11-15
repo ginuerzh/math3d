@@ -7,14 +7,17 @@ import (
 	"math"
 )
 
+// a 4X4 matrix type, just a plain matrix
 type Matrix4 struct {
 	matrix.Matrix
 }
 
+// a 3 components vector type, just a plain vector
 type Vector3 struct {
 	vector.Vector
 }
 
+// a 4 components vector type
 type Vector4 struct {
 	vector.Vector
 }
@@ -35,7 +38,7 @@ func NewVector4(x, y, z, w float64) *Vector4 {
 	return &Vector4{vector.NewVector(4, x, y, z, w)}
 }
 
-// matrix multiply column vector, result is a new column vector
+// Matrix multiply by column vector, result is a new column vector
 func (m *Matrix4) MultiV(v *Vector4) *Vector4 {
 	m2 := matrix.NewMatrix(4, 1) // column vector
 	m2.Init(v.Vector)
@@ -43,7 +46,7 @@ func (m *Matrix4) MultiV(v *Vector4) *Vector4 {
 	return &Vector4{matrix.MultiMM(m.Matrix, m2).Column(1)}
 }
 
-// Row vector multiply matrix, result is a new row vector
+// Row vector multiply by matrix, result is a new row vector
 func (v *Vector4) MultiM(m *Matrix4) *Vector4 {
 	m2 := matrix.NewMatrix(1, 4)
 	m2.InitRow(1, v.Vector)

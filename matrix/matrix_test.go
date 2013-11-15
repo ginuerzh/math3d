@@ -36,3 +36,8 @@ func TestTranspose(t *testing.T) {
 	tran := m1.Transpose()
 	t.Log(m1, tran)
 }
+
+func TestToSlice(t *testing.T) {
+	s := m1.ToSlice()
+	t.Log(m1, s)
+}

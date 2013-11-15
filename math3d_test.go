@@ -7,5 +7,5 @@ import (
 
 func TestTranslate(t *testing.T) {
 	m := Translate(1, 2, 3)
-	t.Log(m)
+	t.Log(m, m.ToSlice())
 }

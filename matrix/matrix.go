@@ -152,6 +152,16 @@ func (m Matrix) Fork() Matrix {
 	return mx
 }
 
+func (m Matrix) ToSlice() []float64 {
+	s := make([]float64, 0, m.Rows()*m.Cols())
+
+	for i := 1; i <= m.Cols(); i++ {
+		s = append(s, m.Column(i)...)
+	}
+
+	return s
+}
+
 func (m Matrix) String() string {
 	buf := new(bytes.Buffer)
 
