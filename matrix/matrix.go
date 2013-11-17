@@ -162,6 +162,16 @@ func (m Matrix) ToSlice() []float64 {
 	return s
 }
 
+func (m Matrix) ToSlice32() []float32 {
+	s := make([]float32, 0, m.Rows()*m.Cols())
+
+	for i := 1; i <= m.Cols(); i++ {
+		s = append(s, m.Column(i).ToSlice32()...)
+	}
+
+	return s
+}
+
 func (m Matrix) String() string {
 	buf := new(bytes.Buffer)
 

@@ -46,6 +46,24 @@ func (m *Matrix4) MultiV(v *Vector4) *Vector4 {
 	return &Vector4{matrix.MultiMM(m.Matrix, m2).Column(1)}
 }
 
+func (m *Matrix4) MultiM(m2 *Matrix4) *Matrix4 {
+	return &Matrix4{matrix.MultiMM(m.Matrix, m2.Matrix)}
+}
+
+func (m *Matrix4) ToArray() [16]float64 {
+	var arr [16]float64
+
+	copy(arr[:], m.Matrix.ToSlice())
+	return arr
+}
+
+func (m *Matrix4) ToArray32() [16]float32 {
+	var arr [16]float32
+
+	copy(arr[:], m.Matrix.ToSlice32())
+	return arr
+}
+
 // Row vector multiply by matrix, result is a new row vector
 func (v *Vector4) MultiM(m *Matrix4) *Vector4 {
 	m2 := matrix.NewMatrix(1, 4)
@@ -116,4 +134,24 @@ func ScaleV(v *Vector3) *Matrix4 {
 
 func ScaleX(x float64) *Matrix4 {
 	return Scale(x, x, x)
+}
+
+func radians(angleInDegrees float64) float64 {
+	return angleInDegrees * (180.0 / math.Pi)
+}
+
+func Perspective(fovy float64, aspect float64, n float64, f float64) *Matrix4 {
+	q := 1.0 / math.Tan(radians(0.5*fovy))
+	A := q / aspect
+	B := (n + f) / (n - f)
+	C := (2.0 * n * f) / (n - f)
+
+	m := NewMatrix4()
+	v1 := NewVector4(A, 0, 0, 0)
+	v2 := NewVector4(0, q, 0, 0)
+	v3 := NewVector4(0, 0, B, -1)
+	v4 := NewVector4(0, 0, C, 0)
+
+	m.Init(v1.Vector, v2.Vector, v3.Vector, v4.Vector)
+	return m
 }

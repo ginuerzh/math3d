@@ -345,6 +345,20 @@ func (v Vector) Perp(vec Vector) (Vector, error) {
 	return Sub(v, w)
 }
 
+func (v Vector) ToSlice() []float64 {
+	s := make([]float64, v.Dim())
+	copy(s, v)
+	return s
+}
+
+func (v Vector) ToSlice32() []float32 {
+	s := make([]float32, v.Dim())
+	for i, value := range v {
+		s[i] = float32(value)
+	}
+	return s
+}
+
 func (v Vector) String() string {
 	buf := new(bytes.Buffer)
 
